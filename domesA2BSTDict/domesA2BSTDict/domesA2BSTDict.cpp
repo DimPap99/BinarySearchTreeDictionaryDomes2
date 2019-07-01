@@ -17,9 +17,10 @@ class Node{
 		Node *leftChild = NULL;
 		Node *rightChild = NULL;
 
-		Node::~Node() {
-			delete this;
-		}
+	/*Node::~Node(){
+		delete this;
+	}*/
+		
 };
 
 //BST creation
@@ -91,6 +92,70 @@ class BinarySearchTree {
 			return false;
 		}
 
+		//βρισκει το μικροτερο σε τιμη φυλλο μεσα σε ενα δεντρο.
+			 Node *getSmallestLeaf(Node *subtreeRoot) {
+				 Node *n = NULL;
+				 Node *prevNode = NULL;
+			while (subtreeRoot != NULL) {
+				if (subtreeRoot->leftChild == NULL && subtreeRoot->rightChild == NULL) {
+					n = new Node();
+					n->word = subtreeRoot->word;
+					n->translation = subtreeRoot->translation;
+					n->leftChild = NULL;
+					n->rightChild = NULL;
+					//delete subtreeRoot;
+					subtreeRoot = NULL;
+					//θετουμε το παιδι του γονέα null αφου θα το μετακινησουμε
+					prevNode->leftChild = NULL;
+					break;
+				}
+				//κραταμε τον γονεα του φυλλου
+				if (subtreeRoot->leftChild != NULL && subtreeRoot->leftChild->leftChild == NULL) {
+					prevNode = subtreeRoot;
+				}
+				n = subtreeRoot;
+				subtreeRoot = subtreeRoot->leftChild;
+				
+			}
+			
+			
+			//delete subtreeRoot;
+			return n;
+		}
+
+		bool deleteWord(string word) {
+			//αν η λεξη που θελουμε να διαγραφει ειναι στη ριζα
+			if (this->root != NULL && this->root->word == word) {
+				//αν δεν υπαρχει δεξι υποδεντρο και υπαρχει αριστερο τοτε το πρωτο αριστερο στοιχειο παιρνει την θεση της ριζας.
+				if (this->root->rightChild == NULL && this->root->leftChild != NULL) {
+					Node *n = NULL;
+					n = new Node();
+					n = root->leftChild;
+					delete this->root;
+					this->root = n;
+					return true;
+				}
+				//αν υπαρχει δεξι υποδεντρο τοτε παντοτε κοιταμε σε αυτο και αλλαζουμε τον διαγραφέντα κομβο
+				//με τον κομβο που περιεχει την πιο "κοντινη" τιμη σε αυτον.
+				if (this->root->rightChild != NULL) {
+					Node *n = NULL;
+					n = new Node();
+					//επιστεφει το μικροτερο φυλο
+					n = getSmallestLeaf(root->rightChild);
+
+					if (n != this->root->rightChild) {
+						n->rightChild = this->root->rightChild;
+						n->leftChild = this->root->leftChild;
+					}
+					this->root = n;
+					
+					return true;
+				}
+			}
+
+
+			return false;
+		}
 		void printInorder(Node *root) {
 
 			if (root == NULL) {
@@ -111,9 +176,19 @@ int main()
 {
 	BinarySearchTree bst;
 	bst.insert("a", "A");
-	bst.insert("d", "D");
-	bst.insert("b", "B");
 	bst.insert("e", "E");
+	//bst.insert("d", "E");
+	bst.insert("g", "G");
+	bst.insert("f", "f");
+	//bst.insert("c", "C");
+	//bst.insert("b", "B");
+	/*bst.insert("c", "C");
+	bst.insert("e", "E");
+	bst.insert("g", "G");
+	bst.insert("f", "F");
+	*/bst.printInorder(bst.root);
+	cout << endl;
+	bst.deleteWord("a");
 	bst.printInorder(bst.root);
     return 0;
 }
