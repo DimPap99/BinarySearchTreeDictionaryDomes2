@@ -122,40 +122,63 @@ class BinarySearchTree {
 			//delete subtreeRoot;
 			return n;
 		}
+			 Node * minValueNode( Node* node)
+			 {
+				 Node* current = node;
 
-		bool deleteWord(string word) {
-			//αν η λεξη που θελουμε να διαγραφει ειναι στη ριζα
-			if (this->root != NULL && this->root->word == word) {
-				//αν δεν υπαρχει δεξι υποδεντρο και υπαρχει αριστερο τοτε το πρωτο αριστερο στοιχειο παιρνει την θεση της ριζας.
-				if (this->root->rightChild == NULL && this->root->leftChild != NULL) {
-					Node *n = NULL;
-					n = new Node();
-					n = root->leftChild;
-					delete this->root;
-					this->root = n;
-					return true;
-				}
-				//αν υπαρχει δεξι υποδεντρο τοτε παντοτε κοιταμε σε αυτο και αλλαζουμε τον διαγραφέντα κομβο
-				//με τον κομβο που περιεχει την πιο "κοντινη" τιμη σε αυτον.
-				if (this->root->rightChild != NULL) {
-					Node *n = NULL;
-					n = new Node();
-					//επιστεφει το μικροτερο φυλο
-					n = getSmallestLeaf(root->rightChild);
+				 /* loop down to find the leftmost leaf */
+				 while (current && current->leftChild != NULL)
+					 current = current->leftChild;
 
-					if (n != this->root->rightChild) {
-						n->rightChild = this->root->rightChild;
-						n->leftChild = this->root->leftChild;
-					}
-					this->root = n;
-					
-					return true;
-				}
-			}
+				 return current;
+			 }
+			 /* Given a binary search tree and a key, this function deletes the key
+			 and returns the new root */
+			 struct Node* deleteNode( Node* root, string word)
+			 {
+				 // base case 
+				 if (root == NULL) return root;
 
+				 // If the key to be deleted is smaller than the root's key, 
+				 // then it lies in left subtree 
+				 if (word < root->word)
+					 root->leftChild = deleteNode(root->leftChild, word);
 
-			return false;
-		}
+				 // If the key to be deleted is greater than the root's key, 
+				 // then it lies in right subtree 
+				 else if (word > root->word)
+					 root->rightChild = deleteNode(root->rightChild, word);
+
+				 // if key is same as root's key, then This is the node 
+				 // to be deleted 
+				 else
+				 {
+					 // node with only one child or no child 
+					 if (root->leftChild == NULL)
+					 {
+						 Node *temp = root->rightChild;
+						 free(root);
+						 return temp;
+					 }
+					 else if (root->rightChild == NULL)
+					 {
+						 Node *temp = root->leftChild;
+						 free(root);
+						 return temp;
+					 }
+
+					 // node with two children: Get the inorder successor (smallest 
+					 // in the right subtree) 
+					 Node* temp = minValueNode(root->rightChild);
+
+					 // Copy the inorder successor's content to this node 
+					 root->word = temp->word;
+
+					 // Delete the inorder successor 
+					 root->rightChild = deleteNode(root->rightChild, temp->word);
+				 }
+				 return root;
+			 }
 		void printInorder(Node *root) {
 
 			if (root == NULL) {
@@ -188,7 +211,7 @@ int main()
 	bst.insert("f", "F");
 	*/bst.printInorder(bst.root);
 	cout << endl;
-	bst.deleteWord("a");
+	bst.deleteNode(bst.root,"e");
 	bst.printInorder(bst.root);
     return 0;
 }
