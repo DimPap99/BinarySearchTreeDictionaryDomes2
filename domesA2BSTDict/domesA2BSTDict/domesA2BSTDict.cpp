@@ -266,13 +266,13 @@ class BinarySearchTree {
 					 if (root->leftChild == NULL)
 					 {
 						 Node *temp = root->rightChild;
-						// free(root);						
+						 root = NULL;
 						 return temp;
 					 }
 					 else if (root->rightChild == NULL)
 					 {
 						 Node *temp = root->leftChild;
-						 //free(root);
+						 root = NULL;
 						 return temp;
 					 }
 
@@ -291,7 +291,9 @@ class BinarySearchTree {
 
 			  
 
+			  void BFS(Node *root) {
 
+		}
 
 
 
@@ -319,7 +321,20 @@ class BinarySearchTree {
 			
 
 		}
-			
+		void printInorder(struct Node* node)
+		{
+			if (node == NULL)
+				return;
+
+			/* first recur on left child */
+			printInorder(node->leftChild);
+
+			/* then print the data of node */
+			cout << node->word << " ";
+
+			/* now recur on right child */
+			printInorder(node->rightChild);
+		}
 
 };
 
@@ -348,12 +363,13 @@ int main()
 	bst.insert("g", "G");
 	bst.insert("f", "F");
 	*/
-	
-	bst.search("du");
+	bst.printInorder(bst.root);
+	//bst.search("du");
 	//bst.printInorder(bst.root);
 	cout << endl;
-	bst.root = bst.deleteNode(bst.root,"dunk");
-	bst.search("du");
+	bst.deleteNode(bst.root,"cat");
+	bst.printInorder(bst.root);
+	//bst.search("du");
 	//bst.printInorder(bst.root);
     return 0;
 }
